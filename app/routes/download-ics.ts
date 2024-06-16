@@ -7,7 +7,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		status: 200,
 		headers: {
 			"Content-Type": "text/calendar",
-			"Content-Disposition": "attachment; filename=event.ics",
+			"Content-Disposition": "attachment; filename=2cal-event.ics",
 		},
 	});
 }
