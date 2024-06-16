@@ -37,18 +37,18 @@ export const action: ActionFunction = async ({ request }) => {
 	const formData = await request.formData();
 
 	const prompt = formData.get("prompt") as string;
+	const format = formData.get("format") as string;
 	const datetime = formData.get("datetime") as string;
-	const format = formData.get("format");
 
-	const { eventLink, icsFileContent } = await generateEvent(prompt, datetime);
+	const response = await generateEvent(prompt, format, datetime);
 
 	if (format === "google") {
-		return redirect(eventLink);
+		return redirect(response);
 	}
 
 	if (format === "ics") {
 		return redirectDocument(
-			`/download-ics?content=${encodeURIComponent(icsFileContent)}`,
+			`/download-ics?content=${encodeURIComponent(response)}`,
 		);
 	}
 };

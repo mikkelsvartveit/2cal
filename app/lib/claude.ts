@@ -7,6 +7,7 @@ const anthropic = new Anthropic({
 export const claude = async (systemPrompt: string, userPrompt: string) => {
 	const claudeResponse = await anthropic.messages.create({
 		model: "claude-3-haiku-20240307",
+		temperature: 0,
 		max_tokens: 4096,
 		system: systemPrompt,
 		messages: [
