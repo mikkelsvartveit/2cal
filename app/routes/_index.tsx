@@ -28,8 +28,9 @@ export const action: ActionFunction = async ({ request }) => {
 	const formData = await request.formData();
 
 	const prompt = formData.get("prompt") as string;
+	const datetime = formData.get("datetime") as string;
 
-	const { eventLink, icsFileContent } = await generateEvent(prompt);
+	const { eventLink, icsFileContent } = await generateEvent(prompt, datetime);
 
 	console.log(eventLink);
 	console.log(icsFileContent);
@@ -61,6 +62,8 @@ export default function Index() {
 					onKeyDown={handleKeyDown}
 					className="text-base"
 				/>
+
+				<input type="hidden" name="datetime" value={new Date().toString()} />
 
 				<Button type="submit">
 					{fetcher.state === "submitting" ? <LoadingSpinner /> : "Create event"}
