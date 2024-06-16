@@ -125,7 +125,7 @@ export default function Index() {
 				</Select>
 
 				{format === "outlook" ? (
-					<p className="text-sm mb-2 text-orange-300">
+					<p className="text-sm mb-2 text-orange-400">
 						Outlook.com does not support importing recurring events.
 					</p>
 				) : null}
@@ -147,6 +147,29 @@ export default function Index() {
 					{fetcher.state === "submitting" ? <LoadingSpinner /> : "Create event"}
 				</Button>
 			</fetcher.Form>
+
+			<footer className="mt-12">
+				<p className="text-center text-xs text-gray-400">
+					Created by{" "}
+					<a
+						href="https://mikkelsvartveit.com"
+						className="underline underline-offset-2"
+						target="_blank"
+						rel="noreferrer"
+					>
+						Mikkel Svartveit
+					</a>{" "}
+					· Source code on{" "}
+					<a
+						href="https://github.com/mikkelsvartveit/2cal"
+						className="underline underline-offset-2"
+						target="_blank"
+						rel="noreferrer"
+					>
+						GitHub
+					</a>
+				</p>
+			</footer>
 		</main>
 	);
 }
