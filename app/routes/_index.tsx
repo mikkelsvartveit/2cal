@@ -99,6 +99,7 @@ export default function Index() {
 					rows={4}
 					name="prompt"
 					placeholder="ECON 101 Lecture, in Wheeler Hall 150, every Monday and Wednesday from 9:40 AM to 11 AM until the last week before Christmas"
+					required
 					onKeyDown={handleKeyDown}
 					className="text-base mb-4"
 				/>
