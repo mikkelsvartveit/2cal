@@ -4,6 +4,7 @@ import type {
 	MetaFunction,
 } from "@remix-run/cloudflare";
 import { redirect, redirectDocument, useFetcher } from "@remix-run/react";
+import { useEffect, useState } from "react";
 import { LoadingSpinner } from "~/components/loadingspinner";
 import { Button } from "~/components/ui/button";
 import {
@@ -37,7 +38,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 	const prompt = formData.get("prompt") as string;
 	const datetime = formData.get("datetime") as string;
-	const format = formData.get("format") as "google" | "apple";
+	const format = formData.get("format");
 
 	const { eventLink, icsFileContent } = await generateEvent(prompt, datetime);
 
@@ -45,7 +46,7 @@ export const action: ActionFunction = async ({ request }) => {
 		return redirect(eventLink);
 	}
 
-	if (format === "apple") {
+	if (format === "ics") {
 		return redirectDocument(
 			`/download-ics?content=${encodeURIComponent(icsFileContent)}`,
 		);
@@ -54,6 +55,19 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
 	const fetcher = useFetcher();
+	const [format, setFormat] = useState("google");
+
+	useEffect(() => {
+		const savedFormat = localStorage.getItem("calendarFormat");
+		if (savedFormat) {
+			setFormat(savedFormat);
+		}
+	}, []);
+
+	const handleFormatChange = (value: string) => {
+		setFormat(value);
+		localStorage.setItem("calendarFormat", value);
+	};
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === "Enter" && !e.shiftKey) {
@@ -69,17 +83,17 @@ export default function Index() {
 				method="POST"
 				className="flex flex-col items-center"
 			>
-				<Select name="format" defaultValue="google">
+				<Select name="format" value={format} onValueChange={handleFormatChange}>
 					<SelectTrigger className="min-w-56 flex-grow mb-2">
 						<SelectValue />
 					</SelectTrigger>
 
-					<SelectGroup>
-						<SelectContent>
+					<SelectContent>
+						<SelectGroup>
 							<SelectItem value="google">Google Calendar</SelectItem>
-							<SelectItem value="apple">Apple Calendar (.ics)</SelectItem>
-						</SelectContent>
-					</SelectGroup>
+							<SelectItem value="ics">Apple Calendar (.ics)</SelectItem>
+						</SelectGroup>
+					</SelectContent>
 				</Select>
 				<Textarea
 					rows={4}
