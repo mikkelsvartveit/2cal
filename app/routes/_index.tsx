@@ -3,9 +3,17 @@ import type {
 	LinksFunction,
 	MetaFunction,
 } from "@remix-run/cloudflare";
-import { redirect, useFetcher } from "@remix-run/react";
+import { redirect, redirectDocument, useFetcher } from "@remix-run/react";
 import { LoadingSpinner } from "~/components/loadingspinner";
 import { Button } from "~/components/ui/button";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import stylesheet from "~/globals.css?url";
 import { generateEvent } from "~/lib/generateEvent";
@@ -29,13 +37,19 @@ export const action: ActionFunction = async ({ request }) => {
 
 	const prompt = formData.get("prompt") as string;
 	const datetime = formData.get("datetime") as string;
+	const format = formData.get("format") as "google" | "apple";
 
 	const { eventLink, icsFileContent } = await generateEvent(prompt, datetime);
 
-	console.log(eventLink);
-	console.log(icsFileContent);
+	if (format === "google") {
+		return redirect(eventLink);
+	}
 
-	throw redirect(eventLink);
+	if (format === "apple") {
+		return redirectDocument(
+			`/download-ics?content=${encodeURIComponent(icsFileContent)}`,
+		);
+	}
 };
 
 export default function Index() {
@@ -53,14 +67,26 @@ export default function Index() {
 			<fetcher.Form
 				id="eventForm"
 				method="POST"
-				className="flex flex-col items-center gap-4"
+				className="flex flex-col items-center"
 			>
+				<Select name="format" defaultValue="google">
+					<SelectTrigger className="min-w-56 flex-grow mb-2">
+						<SelectValue />
+					</SelectTrigger>
+
+					<SelectGroup>
+						<SelectContent>
+							<SelectItem value="google">Google Calendar</SelectItem>
+							<SelectItem value="apple">Apple Calendar (.ics)</SelectItem>
+						</SelectContent>
+					</SelectGroup>
+				</Select>
 				<Textarea
 					rows={4}
 					name="prompt"
 					placeholder="ECON 101 Lecture, in Wheeler Hall 150, every Monday and Wednesday from 9:40 AM to 11 AM until the last week before Christmas"
 					onKeyDown={handleKeyDown}
-					className="text-base"
+					className="text-base mb-2"
 				/>
 
 				<input type="hidden" name="datetime" value={new Date().toString()} />
