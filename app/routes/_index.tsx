@@ -29,7 +29,6 @@ export const action: ActionFunction = async ({ request }) => {
 
 	const prompt = formData.get("prompt") as string;
 
-	// Sleep for 2 seconds to simulate a slow request
 	const { eventLink, icsFileContent } = await generateEvent(prompt);
 
 	console.log(eventLink);
@@ -41,15 +40,29 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
 	const fetcher = useFetcher();
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			fetcher.submit(document.getElementById("eventForm") as HTMLFormElement);
+		}
+	};
+
 	return (
-		<main className="mx-auto my-10 max-w-sm">
-			<fetcher.Form method="POST" className="flex flex-col items-center gap-4">
+		<main className="mx-auto my-10 max-w-md px-2">
+			<fetcher.Form
+				id="eventForm"
+				method="POST"
+				className="flex flex-col items-center gap-4"
+			>
 				<Textarea
+					rows={4}
 					name="prompt"
 					placeholder="ECON 101 Lecture, in Wheeler Hall 150, every Monday and Wednesday from 9:40 AM to 11 AM until the last week before Christmas"
+					onKeyDown={handleKeyDown}
+					className="text-base"
 				/>
 
-				<Button>
+				<Button type="submit">
 					{fetcher.state === "submitting" ? <LoadingSpinner /> : "Create event"}
 				</Button>
 			</fetcher.Form>
