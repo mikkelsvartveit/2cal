@@ -77,7 +77,7 @@ export default function Index() {
 	};
 
 	return (
-		<main className="mx-auto my-10 max-w-md px-2">
+		<main className="mx-auto my-10 max-w-md px-4">
 			<fetcher.Form
 				id="eventForm"
 				method="POST"
@@ -100,7 +100,7 @@ export default function Index() {
 					name="prompt"
 					placeholder="ECON 101 Lecture, in Wheeler Hall 150, every Monday and Wednesday from 9:40 AM to 11 AM until the last week before Christmas"
 					onKeyDown={handleKeyDown}
-					className="text-base mb-2"
+					className="text-base mb-4"
 				/>
 
 				<input type="hidden" name="datetime" value={new Date().toString()} />
