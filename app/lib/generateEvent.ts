@@ -26,6 +26,8 @@ export const generateEvent = async (
 		responseType = "Google Calendar event link";
 	} else if (format === "ics") {
 		responseType = "ICS file";
+	} else if (format === "outlook") {
+		responseType = "Outlook.com calendar event link";
 	}
 
 	const systemPrompt = SYSTEM_PROMPT_TEMPLATE.replaceAll(

@@ -25,7 +25,7 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => {
 	return [
-		{ title: "2cal" },
+		{ title: "2Cal – Create calendar events from text" },
 		{
 			name: "description",
 			content: "Add complex events to your calendar using natural language.",
@@ -42,7 +42,8 @@ export const action: ActionFunction = async ({ request }) => {
 
 	const response = await generateEvent(prompt, format, datetime);
 
-	if (format === "google") {
+	if (format === "google" || format === "outlook") {
+		console.log(response);
 		return redirect(response);
 	}
 
@@ -91,10 +92,18 @@ export default function Index() {
 					<SelectContent>
 						<SelectGroup>
 							<SelectItem value="google">Google Calendar</SelectItem>
-							<SelectItem value="ics">Apple Calendar (.ics)</SelectItem>
+							<SelectItem value="ics">Apple Calendar (ICS)</SelectItem>
+							<SelectItem value="outlook">Outlook.com</SelectItem>
 						</SelectGroup>
 					</SelectContent>
 				</Select>
+
+				{format === "outlook" ? (
+					<p className="text-sm mb-2 text-orange-300">
+						Outlook.com does not support importing recurring events.
+					</p>
+				) : null}
+
 				<Textarea
 					rows={4}
 					name="prompt"
