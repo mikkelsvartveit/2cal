@@ -3,7 +3,12 @@ import type {
 	LinksFunction,
 	MetaFunction,
 } from "@remix-run/cloudflare";
-import { redirect, redirectDocument, useFetcher } from "@remix-run/react";
+import {
+	redirect,
+	redirectDocument,
+	useFetcher,
+	useSearchParams,
+} from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { LoadingSpinner } from "~/components/loadingspinner";
 import { Button } from "~/components/ui/button";
@@ -55,15 +60,36 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Index() {
-	const fetcher = useFetcher();
 	const [format, setFormat] = useState("google");
+	const [prompt, setPrompt] = useState("");
+
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const fetcher = useFetcher();
 
 	useEffect(() => {
+		// Load last used calendar format
 		const savedFormat = localStorage.getItem("calendarFormat");
 		if (savedFormat) {
 			setFormat(savedFormat);
 		}
-	}, []);
+
+		// Load prompt from URL
+		const urlPrompt = searchParams.get("prompt");
+		if (urlPrompt) {
+			setPrompt(urlPrompt);
+		}
+	}, [searchParams]);
+
+	useEffect(() => {
+		// If prompt is set in the URL, submit the form automatically
+		if (searchParams.get("prompt") && prompt && format) {
+			searchParams.delete("prompt");
+			setSearchParams(searchParams);
+
+			fetcher.submit(document.getElementById("eventForm") as HTMLFormElement);
+		}
+	}, [prompt, format, searchParams, setSearchParams, fetcher.submit]);
 
 	const handleFormatChange = (value: string) => {
 		setFormat(value);
@@ -107,6 +133,8 @@ export default function Index() {
 				<Textarea
 					rows={4}
 					name="prompt"
+					value={prompt}
+					onChange={(e) => setPrompt(e.target.value)}
 					placeholder="ECON 101 Lecture, in Wheeler Hall 150, every Monday and Wednesday from 9:40 AM to 11 AM until the last week before Christmas"
 					required
 					onKeyDown={handleKeyDown}
