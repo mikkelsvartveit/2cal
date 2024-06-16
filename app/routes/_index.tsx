@@ -1,4 +1,6 @@
 import type { LinksFunction, MetaFunction } from "@remix-run/cloudflare";
+import { Button } from "~/components/ui/button";
+import { Textarea } from "~/components/ui/textarea";
 import stylesheet from "~/globals.css?url";
 
 export const links: LinksFunction = () => [
@@ -7,14 +9,22 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => {
 	return [
-		{ title: "New Remix App" },
+		{ title: "2cal" },
 		{
 			name: "description",
-			content: "Welcome to Remix on Cloudflare!",
+			content: "Add complex events to your calendar using natural language.",
 		},
 	];
 };
 
 export default function Index() {
-	return <h1 className="text-2xl">Hello World</h1>;
+	return (
+		<main className="mx-auto my-10 max-w-sm">
+			<form className="flex flex-col items-center gap-4">
+				<Textarea placeholder="ECON 101 Lecture, in Wheeler Hall 150, every Monday and Wednesday from 9:40 AM to 11 AM until the last week before Christmas" />
+
+				<Button>Create event</Button>
+			</form>
+		</main>
+	);
 }
