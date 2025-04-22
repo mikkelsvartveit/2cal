@@ -1,4 +1,4 @@
-import { claude } from "./claude";
+import { llm } from "./llm";
 
 const SYSTEM_PROMPT_TEMPLATE = `Your task is to write a {{response_type}} based on the user's input.
 
@@ -35,7 +35,12 @@ export const generateEvent = async (
 		responseType,
 	).replace("{{datetime}}", datetime);
 
-	const response = await claude(systemPrompt, prompt);
+	let response = await llm(systemPrompt, prompt);
 
-	return response;
+	if (format === "ics") {
+		// Remove code fence from ICS response
+		response = response.replace(/```ics\n|\n```/g, "").trim();
+	}
+
+	return response
 };
